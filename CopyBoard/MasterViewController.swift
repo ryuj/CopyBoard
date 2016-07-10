@@ -19,7 +19,7 @@ class MasterViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(insertNewObject(_:)))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(didTapAdd(_:)))
         self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
             let controllers = split.viewControllers
@@ -36,11 +36,59 @@ class MasterViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    // MARK: -
 
-    func insertNewObject(sender: AnyObject) {
-        objects.insert(NSDate(), atIndex: 0)
+    func insertNewObject(text: String) {
+        objects.insert(text, atIndex: 0)
         let indexPath = NSIndexPath(forRow: 0, inSection: 0)
         self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+        
+        save(text)
+    }
+    
+    func save(text: String) {
+        let ud = NSUserDefaults.standardUserDefaults()
+        let key:String = String(objects.count);
+        
+        print("save");
+        print("key:\(key) text:\(text)");
+        ud.setObject(text, forKey: key)
+        ud.synchronize();
+        
+//        print("value:\(ud.stringForKey(key)!)");
+    }
+    
+    func didTapAdd(sender: AnyObject) {
+        showAlert(sender);
+    }
+    
+    func showAlert(sender: AnyObject) {
+        let alert:UIAlertController = UIAlertController(title: "title", message: "msg", preferredStyle: UIAlertControllerStyle.Alert);
+        let cancel:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil);
+        let ok = UIAlertAction(title: "ok", style: UIAlertActionStyle.Default, handler: {
+            (action:UIAlertAction) -> Void in
+            
+            let fields:Array<UITextField>? = alert.textFields as Array<UITextField>?
+            if fields != nil {
+                for field:UITextField in fields! {
+//                    print(field.text);
+                    self.insertNewObject(field.text!);
+                    break;
+                }
+            }
+        });
+        
+        alert.addAction(cancel);
+        alert.addAction(ok);
+        
+        alert.addTextFieldWithConfigurationHandler { (field:UITextField) in
+            field.placeholder = "Input text for copy and paste";
+        }
+        
+        presentViewController(alert, animated: true, completion: {
+            NSLog("show alert completion");
+        });
     }
 
     // MARK: - Segues
@@ -70,8 +118,8 @@ class MasterViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 
-        let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
+        let text = objects[indexPath.row] as! String
+        cell.textLabel!.text = text
         return cell
     }
 
