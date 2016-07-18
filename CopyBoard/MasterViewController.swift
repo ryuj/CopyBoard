@@ -11,13 +11,17 @@ import UIKit
 class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
-    var objects = [AnyObject]()
+    var objects = [String]()
+    
+    let SAVE_KEY:String = "Value"
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        
+        load()
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(didTapAdd(_:)))
         self.navigationItem.rightBarButtonItem = addButton
@@ -38,6 +42,22 @@ class MasterViewController: UITableViewController {
     }
     
     // MARK: -
+    
+    func load() {
+        let ud = NSUserDefaults.standardUserDefaults();
+        let tmp = ud.valueForKey(SAVE_KEY);
+        print("tmp:\(tmp)");
+        if (tmp != nil) {
+            let val : String = tmp as! String
+            print("val:\(val)");
+            
+            let ary:Array = val.componentsSeparatedByString(",")
+            print("ary:\(ary)");
+            objects = ary;
+        }
+    }
+    
+    // MARK: -
 
     func insertNewObject(text: String) {
         objects.insert(text, atIndex: 0)
@@ -49,14 +69,10 @@ class MasterViewController: UITableViewController {
     
     func save(text: String) {
         let ud = NSUserDefaults.standardUserDefaults()
-        let key:String = String(objects.count);
         
-        print("save");
-        print("key:\(key) text:\(text)");
-        ud.setObject(text, forKey: key)
-        ud.synchronize();
-        
-//        print("value:\(ud.stringForKey(key)!)");
+        let str :String = objects.joinWithSeparator(",")
+        ud.setObject(str, forKey:SAVE_KEY)
+        ud.synchronize()
     }
     
     func didTapAdd(sender: AnyObject) {
@@ -120,7 +136,7 @@ class MasterViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 
-        let text = objects[indexPath.row] as! String
+        let text = objects[indexPath.row]
         cell.textLabel!.text = text
         return cell
     }
