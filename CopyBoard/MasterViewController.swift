@@ -80,9 +80,9 @@ class MasterViewController: UITableViewController {
     }
     
     func showAlert(sender: AnyObject) {
-        let alert:UIAlertController = UIAlertController(title: "title", message: "msg", preferredStyle: UIAlertControllerStyle.Alert);
-        let cancel:UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil);
-        let ok = UIAlertAction(title: "ok", style: UIAlertActionStyle.Default, handler: {
+        let alert:UIAlertController = UIAlertController(title: "保存したい単語を入力せよ", message: "", preferredStyle: UIAlertControllerStyle.Alert);
+        let cancel:UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler: nil);
+        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
             (action:UIAlertAction) -> Void in
             
             let fields:Array<UITextField>? = alert.textFields as Array<UITextField>?
@@ -99,7 +99,7 @@ class MasterViewController: UITableViewController {
         alert.addAction(ok);
         
         alert.addTextFieldWithConfigurationHandler { (field:UITextField) in
-            field.placeholder = "Input text for copy and paste";
+//            field.placeholder = "Input text for copy and paste";
         }
         
         presentViewController(alert, animated: true, completion: {
