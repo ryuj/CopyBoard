@@ -19,11 +19,11 @@ class MasterViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
         
         load()
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(didTapAdd(_:)))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAdd(_:)))
         self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
             let controllers = split.viewControllers
@@ -31,8 +31,8 @@ class MasterViewController: UITableViewController {
         }
     }
 
-    override func viewWillAppear(animated: Bool) {
-        self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
+    override func viewWillAppear(_ animated: Bool) {
+        self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
         super.viewWillAppear(animated)
     }
 
@@ -44,14 +44,14 @@ class MasterViewController: UITableViewController {
     // MARK: -
     
     func load() {
-        let ud = NSUserDefaults.standardUserDefaults();
-        let tmp = ud.valueForKey(SAVE_KEY);
+        let ud = UserDefaults.standard;
+        let tmp = ud.value(forKey: SAVE_KEY);
         print("tmp:\(tmp)");
         if (tmp != nil) {
             let val : String = tmp as! String
             print("val:\(val)");
             
-            let ary:Array = val.componentsSeparatedByString(",")
+            let ary:Array = val.components(separatedBy: ",")
             print("ary:\(ary)");
             objects = ary;
         }
@@ -59,30 +59,30 @@ class MasterViewController: UITableViewController {
     
     // MARK: -
 
-    func insertNewObject(text: String) {
-        objects.insert(text, atIndex: 0)
-        let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-        self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+    func insertNewObject(_ text: String) {
+        objects.insert(text, at: 0)
+        let indexPath = IndexPath(row: 0, section: 0)
+        self.tableView.insertRows(at: [indexPath], with: .automatic)
         
         save(text)
     }
     
-    func save(text: String) {
-        let ud = NSUserDefaults.standardUserDefaults()
+    func save(_ text: String) {
+        let ud = UserDefaults.standard
         
-        let str :String = objects.joinWithSeparator(",")
-        ud.setObject(str, forKey:SAVE_KEY)
+        let str :String = objects.joined(separator: ",")
+        ud.set(str, forKey:SAVE_KEY)
         ud.synchronize()
     }
     
-    func didTapAdd(sender: AnyObject) {
+    func didTapAdd(_ sender: AnyObject) {
         showAlert(sender);
     }
     
-    func showAlert(sender: AnyObject) {
-        let alert:UIAlertController = UIAlertController(title: "保存したい単語を入力せよ", message: "", preferredStyle: UIAlertControllerStyle.Alert);
-        let cancel:UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.Cancel, handler: nil);
-        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
+    func showAlert(_ sender: AnyObject) {
+        let alert:UIAlertController = UIAlertController(title: "保存したい単語を入力せよ", message: "", preferredStyle: UIAlertControllerStyle.alert);
+        let cancel:UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.cancel, handler: nil);
+        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {
             (action:UIAlertAction) -> Void in
             
             let fields:Array<UITextField>? = alert.textFields as Array<UITextField>?
@@ -98,11 +98,11 @@ class MasterViewController: UITableViewController {
         alert.addAction(cancel);
         alert.addAction(ok);
         
-        alert.addTextFieldWithConfigurationHandler { (field:UITextField) in
+        alert.addTextField { (field:UITextField) in
 //            field.placeholder = "Input text for copy and paste";
         }
         
-        presentViewController(alert, animated: true, completion: {
+        present(alert, animated: true, completion: {
             NSLog("show alert completion");
         });
     }
@@ -125,42 +125,42 @@ class MasterViewController: UITableViewController {
 
     // MARK: - Table View
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
         let text = objects[indexPath.row]
         cell.textLabel!.text = text
         return cell
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            objects.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            objects.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let text = objects[indexPath.row];
-        let pasteboard = UIPasteboard.generalPasteboard()
+        let pasteboard = UIPasteboard.general
         pasteboard.setValue(text, forPasteboardType: "public.text")
         
-        tableView.deselectRowAtIndexPath(indexPath, animated: true);
+        tableView.deselectRow(at: indexPath, animated: true);
     }
 
 
