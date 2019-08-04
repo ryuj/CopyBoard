@@ -75,14 +75,14 @@ class MasterViewController: UITableViewController {
         ud.synchronize()
     }
     
-    func didTapAdd(_ sender: AnyObject) {
+    @objc func didTapAdd(_ sender: AnyObject) {
         showAlert(sender);
     }
     
     func showAlert(_ sender: AnyObject) {
-        let alert:UIAlertController = UIAlertController(title: "保存したい単語を入力せよ", message: "", preferredStyle: UIAlertControllerStyle.alert);
-        let cancel:UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertActionStyle.cancel, handler: nil);
-        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {
+        let alert:UIAlertController = UIAlertController(title: "保存したい単語を入力せよ", message: "", preferredStyle: UIAlertController.Style.alert);
+        let cancel:UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler: nil);
+        let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: {
             (action:UIAlertAction) -> Void in
             
             let fields:Array<UITextField>? = alert.textFields as Array<UITextField>?
@@ -146,7 +146,7 @@ class MasterViewController: UITableViewController {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             objects.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
