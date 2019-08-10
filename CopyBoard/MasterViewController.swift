@@ -158,7 +158,7 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let text = objects[indexPath.row];
         let pasteboard = UIPasteboard.general
-        pasteboard.setValue(text, forPasteboardType: "public.text")
+        pasteboard.string = text;
         
         tableView.deselectRow(at: indexPath, animated: true);
     }
